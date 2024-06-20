@@ -12,9 +12,6 @@ button.Size = UDim2.new(0, 100, 0, 50) -- Set size
 button.Position = UDim2.new(0, 10, 0.5, -25) -- Set position to the left with an X offset of 10 pixel
 button.BackgroundColor3 = Color3.fromRGB(255,255,255) -- Set button background color to red
 
-button.Text = "Stop Tween" -- Set button text
-button.Parent = screenGui
-
 local function onClick()
     toTarget(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
 end
@@ -22,13 +19,12 @@ end
 button.MouseButton1Click:Connect(onClick)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
-local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tienvn123tkvn/Test/main/ZINERHUB_Ui.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tienvn123tkvn/Test/main/ZierhubManager.lua"))()
-local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tienvn123tkvn/Test/main/ZierhubfaceManager.lua"))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 ----------------------------------------------------------------------------------------------------------------------------------------------
 local Window = Fluent:CreateWindow({
     Title = "NHN HUB",
-    SubTitle = "Kai Wibu",
     TabWidth = 160,
     Size = UDim2.fromOffset(500, 320),
     Acrylic = true,
@@ -36,7 +32,6 @@ local Window = Fluent:CreateWindow({
     MinimizeKey = Enum.KeyCode.End
 })
 local Tabs = {
-    profile = Window:AddTab({ Title = "Information", Icon = "scan-face" }),
     Main = Window:AddTab({ Title = "Main Farm", Icon = "home" }),
     Sea = Window:AddTab({ Title = "Sea Event", Icon = "anchor" }),
     Setting = Window:AddTab({ Title = "Settings", Icon = "settings" }),
