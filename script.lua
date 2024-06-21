@@ -19,9 +19,9 @@ end
 button.MouseButton1Click:Connect(onClick)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
-local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tienvn123tkvn/Test/main/ZINERHUB_Ui.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tienvn123tkvn/Test/main/ZierhubManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tienvn123tkvn/Test/main/ZierhubfaceManager.lua"))()
 ----------------------------------------------------------------------------------------------------------------------------------------------
 local Window = Fluent:CreateWindow({
     Title = "NHN HUB",
@@ -32,6 +32,7 @@ local Window = Fluent:CreateWindow({
     MinimizeKey = Enum.KeyCode.End
 })
 local Tabs = {
+    profile = Window:AddTab({ Title = "Information", Icon = "scan-face" }),
     Main = Window:AddTab({ Title = "Main Farm", Icon = "home" }),
     Sea = Window:AddTab({ Title = "Sea Event", Icon = "anchor" }),
     Setting = Window:AddTab({ Title = "Settings", Icon = "settings" }),
@@ -2561,11 +2562,11 @@ local listfastattack = {'Normal','Slow','Super','Low'}
     DropdownDelayAttack:OnChanged(function(Value)
     _G.FastAttackZINER_Mode = Value
 	if _G.FastAttackWinterhub_Mode == "Slow" then
-		_G.Fast_Delay = 0.75
+		_G.Fast_Delay = 0.12
 	elseif _G.FastAttackWinterhub_Mode == "Normal" then
-		_G.Fast_Delay = 0.5
+		_G.Fast_Delay = 0.75
 	elseif _G.FastAttackWinterhub_Mode == "Super" then
-		_G.Fast_Delay = 0.2
+		_G.Fast_Delay = 0.5
 	elseif _G.FastAttackWinterhub_Mode == "Low" then
 		_G.Fast_Delay = 0.175
 	 end
@@ -2772,6 +2773,60 @@ local listfastattack = {'Normal','Slow','Super','Low'}
 
 --// auto farm chest
 
+if Third_Sea then
+local ToggleChest = Tabs.Main:AddToggle("ToggleChest", {
+    Title = "Auto Farm Chest Stop If Has Items Tp",
+    Description = "auto farm rương dạng Tp reset", 
+    Default = false })
+ToggleChest:OnChanged(function(Value)
+    _G.chestsea3 = Value
+end)
+Options.ToggleChest:SetValue(false)
+end
+
+if Second_Sea then
+local ToggleChest = Tabs.Main:AddToggle("ToggleChest", {
+    Title = "Auto Farm Chest Stop If Has Items Tp",
+    Description = "auto farm rương dạng Tp reset", 
+    Default = false })
+ToggleChest:OnChanged(function(Value)
+    _G.chestsea2 = Value
+end)
+Options.ToggleChest:SetValue(false)
+end
+
+local ToggleChestTween = Tabs.Main:AddToggle("ToggleChestTween", {
+    Title = "Auto Chest Tween",
+    Description = "farm chest dạng bay", 
+    Default = false })
+ToggleChestTween:OnChanged(function(Value)
+    AutoFarmChest = Value
+end)
+Options.ToggleChestTween:SetValue(false)
+_G.MagnitudeAdd = 0
+spawn(function()
+	while wait() do 
+		if AutoFarmChest then
+			for i,v in pairs(game:GetService("Workspace"):GetChildren()) do 
+				if v.Name:find("Chest") then
+					if game:GetService("Workspace"):FindFirstChild(v.Name) then
+						if (v.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 5000+_G.MagnitudeAdd then
+							repeat wait()
+								if game:GetService("Workspace"):FindFirstChild(v.Name) then
+									Tween(v.CFrame)
+								end
+							until AutoFarmChest == false or not v.Parent
+							Tween(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+							_G.MagnitudeAdd = _G.MagnitudeAdd+1500
+							break
+						end
+					end
+				end
+			end
+		end
+	end
+end)
+
       Tabs.Main:AddButton({
         Title = "Auto Redeem All Code",
         Description = "",
@@ -2836,6 +2891,190 @@ local listfastattack = {'Normal','Slow','Super','Low'}
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 --Mastery
+local Mastery = Tabs.Main:AddSection("Mastery Farm")
+    local DropdownMastery = Tabs.Main:AddDropdown("DropdownMastery", {
+        Title = "Auto Mastery Mode",
+        Description = "",
+        Values = {"Level","Near Mobs",},
+        Multi = false,
+        Default = 1,
+    })
+
+    DropdownMastery:SetValue("Level")
+
+    DropdownMastery:OnChanged(function(Value)
+        TypeMastery = Value
+    end)
+
+    local ToggleMasteryFruit = Tabs.Main:AddToggle("ToggleMasteryFruit", {
+        Title = "Auto BF Mastery",
+        Description = "", 
+        Default = false })
+    ToggleMasteryFruit:OnChanged(function(Value)
+        AutoFarmMasDevilFruit = Value
+    end)
+    Options.ToggleMasteryFruit:SetValue(false)
+
+ 
+
+    local SliderHealt = Tabs.Main:AddSlider("SliderHealt", {
+        Title = "Health (%) Mob",
+        Description = "",
+        Default = 25,
+        Min = 0,
+        Max = 100,
+        Rounding = 1,
+        Callback = function(Value)
+            KillPercent = Value
+        end
+    })
+
+    SliderHealt:OnChanged(function(Value)
+        KillPercent = Value
+    end)
+
+    SliderHealt:SetValue(25)
+    
+    
+spawn(function()
+while task.wait(1) do
+if _G.UseSkill then
+pcall(function()
+  if _G.UseSkill then
+  for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+  if v.Name == MonFarm and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health <= v.Humanoid.MaxHealth * KillPercent / 100 then
+  repeat game:GetService("RunService").Heartbeat:wait()
+  EquipTool(game.Players.LocalPlayer.Data.DevilFruit.Value)
+  Tween(v.HumanoidRootPart.CFrame * CFrame.new(posX,posY,posZ))
+  PositionSkillMasteryDevilFruit = v.HumanoidRootPart.Position
+  if game:GetService("Players").LocalPlayer.Character:FindFirstChild(game.Players.LocalPlayer.Data.DevilFruit.Value) then
+  game:GetService("Players").LocalPlayer.Character:FindFirstChild(game.Players.LocalPlayer.Data.DevilFruit.Value).MousePos.Value = PositionSkillMasteryDevilFruit
+  local DevilFruitMastery = game:GetService("Players").LocalPlayer.Character:FindFirstChild(game.Players.LocalPlayer.Data.DevilFruit.Value).Level.Value
+  if SkillZ and DevilFruitMastery >= 1 then
+  game:service('VirtualInputManager'):SendKeyEvent(true, "Z", false, game)
+  wait(0.1)
+  game:service('VirtualInputManager'):SendKeyEvent(false, "Z", false, game)
+  end
+  if SkillX and DevilFruitMastery >= 2 then
+  game:service('VirtualInputManager'):SendKeyEvent(true, "X", false, game)
+  wait(0.2)
+  game:service('VirtualInputManager'):SendKeyEvent(false, "X", false, game)
+  end
+  if SkillC and DevilFruitMastery >= 3 then
+  game:service('VirtualInputManager'):SendKeyEvent(true, "C", false, game)
+  wait(0.3)
+  game:service('VirtualInputManager'):SendKeyEvent(false, "C", false, game)
+  end
+  if SkillV and DevilFruitMastery >= 4 then
+  game:service('VirtualInputManager'):SendKeyEvent(true, "V", false, game)
+  wait(0.4)
+  game:service('VirtualInputManager'):SendKeyEvent(false, "V", false, game)
+  end
+  if SkillF and DevilFruitMastery >= 5 then
+  game:GetService("VirtualInputManager"):SendKeyEvent(true, "F", false, game)
+  wait(0.5)
+  game:GetService("VirtualInputManager"):SendKeyEvent(false, "F", false, game)
+  end
+  end
+  until not AutoFarmMasDevilFruit or not _G.UseSkill or v.Humanoid.Health == 0
+  end
+  end
+  end
+  end)
+end
+end
+end)
+spawn(function()
+    while task.wait(.1) do
+    if AutoFarmMasDevilFruit and TypeMastery == 'Level' then
+    pcall(function()
+      CheckLevel(SelectMonster)
+      if not string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text, NameMon) or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false then
+      game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
+      if BypassTP then
+        if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - CFrameQ.Position).Magnitude > 2500 then
+        to(CFrameQ)
+        wait(0.2)
+        elseif (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - CFrameQ.Position).Magnitude < 2500 then
+        Tween(CFrameQ)
+        end
+        else
+          Tween(CFrameQ)
+        end
+      if (CFrameQ.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 5 then
+      game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest",NameQuest,QuestLv)
+      end
+      elseif string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text, NameMon) or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == true then
+      for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+      if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
+      if v.Name == Ms then
+        repeat wait(_G.Fast_Delay)
+      if v.Humanoid.Health <= v.Humanoid.MaxHealth * KillPercent / 100 then
+      _G.UseSkill = true
+      else
+    _G.UseSkill = false
+	   AutoHaki()
+       bringmob = true
+      EquipTool(SelectWeapon)
+      Tween(v.HumanoidRootPart.CFrame * CFrame.new(posX,posY,posZ))
+      v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+      v.HumanoidRootPart.Transparency = 1
+      v.Humanoid.JumpPower = 0
+      v.Humanoid.WalkSpeed = 0
+      v.HumanoidRootPart.CanCollide = false
+      FarmPos = v.HumanoidRootPart.CFrame
+      MonFarm = v.Name
+      
+      NormalAttack()
+      end
+      until not AutoFarmMasDevilFruit or not v.Parent or v.Humanoid.Health == 0 or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false or not game:GetService("Workspace").Enemies:FindFirstChild(v.Name) or not TypeMastery == 'Level'
+      bringmob = false
+      _G.UseSkill = false
+      
+      end
+      end
+      end
+      end
+      end)
+---------Near Mas
+    elseif AutoFarmMasDevilFruit and TypeMastery == 'Near Mobs' then
+    pcall(function()
+      for i,v in pairs (game.Workspace.Enemies:GetChildren()) do
+      if v.Name and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
+      if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v:FindFirstChild("HumanoidRootPart").Position).Magnitude <= 5000 then
+        repeat wait(_G.Fast_Delay)
+      if v.Humanoid.Health <= v.Humanoid.MaxHealth * KillPercent / 100 then
+      _G.UseSkill = true
+      else
+        _G.UseSkill = false
+		AutoHaki()
+        bringmob = true
+      EquipTool(SelectWeapon)
+      Tween(v.HumanoidRootPart.CFrame * CFrame.new(posX,posY,posZ))
+      v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+      v.HumanoidRootPart.Transparency = 1
+      v.Humanoid.JumpPower = 0
+      v.Humanoid.WalkSpeed = 0
+      v.HumanoidRootPart.CanCollide = false
+  --v.Humanoid:ChangeState(11)
+  --v.Humanoid:ChangeState(14)
+      FarmPos = v.HumanoidRootPart.CFrame
+      MonFarm = v.Name
+      
+       NormalAttack()
+      end
+      until not AutoFarmMasDevilFruit or not MasteryType == 'Near Mobs' or not v.Parent or v.Humanoid.Health == 0 or not TypeMastery == 'Near Mobs'
+      bringmob = false
+      _G.UseSkill = false
+      
+    end
+end
+end
+end)
+end
+end
+end)
+
 if Third_Sea then
 local MiscFarm = Tabs.Main:AddSection("Bone Farm")
 
@@ -2852,50 +3091,89 @@ local StatusBone = Tabs.Main:AddParagraph({
 	end)
 
 
-local Section = M:AddSection({
-    Name = "Bone Menu"
-})
-
-local Bone = M:AddLabel("Bone : ")
-
+local ToggleBone = Tabs.Main:AddToggle("ToggleBone", {
+    Title = "Auto farm Bone (vip]",
+    Description = "", 
+    Default = false })
+ToggleBone:OnChanged(function(Value)
+    _G.AutoBone = Value
+    if Value == false then
+        wait()
+        Tween(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+        wait()
+    end
+end)
+Options.ToggleBone:SetValue(false)
+local BoneCFrame = CFrame.new(-9515.75, 174.8521728515625, 6079.40625)
+local BoneCFrame2 = CFrame.new(-9359.453125, 141.32679748535156, 5446.81982421875)
 spawn(function()
     while wait() do
-        pcall(function()
-            Bone:Set("Bone You Have : "..(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Bones","Check")))
-        end)
+        if _G.AutoBone then
+            pcall(function()
+                local QuestTitle = game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text
+                if not string.find(QuestTitle, "Demonic Soul") then
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
+                end
+                if game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false then
+                 toTarget(BoneCFrame)
+                if (BoneCFrame.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 then    
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest","HauntedQuest2",1)
+                    end
+                elseif game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == true then
+                    if game:GetService("Workspace").Enemies:FindFirstChild("Reborn Skeleton") or game:GetService("Workspace").Enemies:FindFirstChild("Living Zombie") or game:GetService("Workspace").Enemies:FindFirstChild("Demonic Soul") or game:GetService("Workspace").Enemies:FindFirstChild("Posessed Mummy") then
+                        for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                            if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                                if v.Name == "Reborn Skeleton" or v.Name == "Living Zombie" or v.Name == "Demonic Soul" or v.Name == "Posessed Mummy" then
+                                    if string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text, "Demonic Soul") then
+                                        repeat wait(_G.Fast_Delay)
+                                            AttackNoCoolDown()
+                                            AutoHaki()
+                                            bringmob = true
+                                            EquipTool(SelectWeapon)
+                                            Tween(v.HumanoidRootPart.CFrame * CFrame.new(posX,posY,posZ))
+			                                v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+                                            v.HumanoidRootPart.Transparency = 1
+                                            v.Humanoid.JumpPower = 0
+                                            v.Humanoid.WalkSpeed = 0
+                                            v.HumanoidRootPart.CanCollide = false
+                                            FarmPos = v.HumanoidRootPart.CFrame
+                                            MonFarm = v.Name
+                                        until not _G.AutoBone or v.Humanoid.Health <= 0 or not v.Parent or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false
+                                    else
+                                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
+                                        bringmob = false
+                                    end
+                                end
+                            end
+                        end
+                    else
+                    end
+                end
+            end)
+        end
     end
 end)
 
-ToggleBone = M:AddToggle({
-    Name = "Auto Farm Bone",
-    Default = false,
-    Flag = "Auto Farm Bone",
-    Save = true,
-    Callback = function(Value)
-        _G.Auto_Bone = Value
-        StopTween(_G.Auto_Bone)
-    end    
-})
-        
-ToggleRandom = M:AddToggle({
-        Name = "Auto Random Bone",
-        Default = false,
-        Flag = "Auto Random Bone",
-        Save = true,
-        Callback = function(Value)
-            _G.Auto_Random_Bone = Value
-        end    
-    })
-    spawn(function()
-        pcall(function()
-            while wait(.1) do
-                if _G.Auto_Random_Bone then    
-                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Bones","Buy",1,1)
-                end
-            end
-        end)
-    end)
-
+local ToggleRandomBone = Tabs.Main:AddToggle("ToggleRandomBone", {Title = "Auto Random Bone",Description = "", Default = false })
+ToggleRandomBone:OnChanged(function(Value)  
+		_G.AutoRandomBone = Value
+end)
+Options.ToggleRandomBone:SetValue(false)
+	
+spawn(function()
+	while wait(0.0000000000000000000000000000000000000000000000000001) do
+	if _G.AutoRandomBone then
+	local args = {
+	 [1] = "Bones",
+	 [2] = "Buy",
+	 [3] = 1,
+	 [4] = 1
+	}
+	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+	end
+	end
+	end)
+end
 if Third_Sea then
 local MiscFarm = Tabs.Main:AddSection("Katakuri Farm")
 local Mob_Kill_Cake_Prince = Tabs.Main:AddParagraph({
@@ -2921,7 +3199,7 @@ end)
 
 
 local ToggleCake = Tabs.Main:AddToggle("ToggleCake", {
-    Title = "Auto Farm Cake Prince", 
+    Title = "Auto Farm Cake Prince",
     Default = false })
 ToggleCake:OnChanged(function(Value)
  _G.CakePrince = Value
@@ -7602,7 +7880,7 @@ spawn(function()
         elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709143733" then
             Hop()
             Fluent:Notify({
-                Title = "Skyx hub",
+                Title = "NHN hub",
                 Content = "Turn Off Find Full Moon...",
                 SubContent = "", -- Optional
                 Duration = 5 -- Set to nil to make the notification not disappear
@@ -7610,7 +7888,7 @@ spawn(function()
         elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709150401" then
             Hop()
             Fluent:Notify({
-                Title = "Skyx hub",
+                Title = "NHN hub",
                 Content = "Hop...",
                 SubContent = "", -- Optional
                 Duration = 5 -- Set to nil to make the notification not disappear
@@ -7618,7 +7896,7 @@ spawn(function()
         elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709149680" then
             Hop()
             Fluent:Notify({
-                Title = "Skyx hub",
+                Title = "NHN hub",
                 Content = "Hop...",
                 SubContent = "", -- Optional
                 Duration = 5 -- Set to nil to make the notification not disappear
