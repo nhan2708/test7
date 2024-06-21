@@ -2852,89 +2852,50 @@ local StatusBone = Tabs.Main:AddParagraph({
 	end)
 
 
-local ToggleBone = Tabs.Main:AddToggle("ToggleBone", {
-    Title = "Auto farm Bone (vip]",
-    Description = "", 
-    Default = false })
-ToggleBone:OnChanged(function(Value)
-    _G.AutoBone = Value
-    if Value == false then
-        wait()
-        Tween(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
-        wait()
-    end
-end)
-Options.ToggleBone:SetValue(false)
-local BoneCFrame = CFrame.new(-9515.75, 174.8521728515625, 6079.40625)
-local BoneCFrame2 = CFrame.new(-9359.453125, 141.32679748535156, 5446.81982421875)
+local Section = M:AddSection({
+    Name = "Bone Menu"
+})
+
+local Bone = M:AddLabel("Bone : ")
+
 spawn(function()
     while wait() do
-        if _G.AutoBone then
-            pcall(function()
-                local QuestTitle = game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text
-                if not string.find(QuestTitle, "Demonic Soul") then
-                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
-                end
-                if game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false then
-                 toTarget(BoneCFrame)
-                if (BoneCFrame.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 then    
-                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest","HauntedQuest2",1)
-                    end
-                elseif game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == true then
-                    if game:GetService("Workspace").Enemies:FindFirstChild("Reborn Skeleton") or game:GetService("Workspace").Enemies:FindFirstChild("Living Zombie") or game:GetService("Workspace").Enemies:FindFirstChild("Demonic Soul") or game:GetService("Workspace").Enemies:FindFirstChild("Posessed Mummy") then
-                        for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-                            if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
-                                if v.Name == "Reborn Skeleton" or v.Name == "Living Zombie" or v.Name == "Demonic Soul" or v.Name == "Posessed Mummy" then
-                                    if string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text, "Demonic Soul") then
-                                        repeat wait(_G.Fast_Delay)
-                                            AttackNoCoolDown()
-                                            AutoHaki()
-                                            bringmob = true
-                                            EquipTool(SelectWeapon)
-                                            Tween(v.HumanoidRootPart.CFrame * CFrame.new(posX,posY,posZ))
-			                                v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
-                                            v.HumanoidRootPart.Transparency = 1
-                                            v.Humanoid.JumpPower = 0
-                                            v.Humanoid.WalkSpeed = 0
-                                            v.HumanoidRootPart.CanCollide = false
-                                            FarmPos = v.HumanoidRootPart.CFrame
-                                            MonFarm = v.Name
-                                        until not _G.AutoBone or v.Humanoid.Health <= 0 or not v.Parent or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false
-                                    else
-                                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
-                                        bringmob = false
-                                    end
-                                end
-                            end
-                        end
-                    else
-                    end
-                end
-            end)
-        end
+        pcall(function()
+            Bone:Set("Bone You Have : "..(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Bones","Check")))
+        end)
     end
 end)
 
-local ToggleRandomBone = Tabs.Main:AddToggle("ToggleRandomBone", {Title = "Auto Random Bone",Description = "", Default = false })
-ToggleRandomBone:OnChanged(function(Value)  
-		_G.AutoRandomBone = Value
-end)
-Options.ToggleRandomBone:SetValue(false)
-	
-spawn(function()
-	while wait(0.0000000000000000000000000000000000000000000000000001) do
-	if _G.AutoRandomBone then
-	local args = {
-	 [1] = "Bones",
-	 [2] = "Buy",
-	 [3] = 1,
-	 [4] = 1
-	}
-	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-	end
-	end
-	end)
-end
+ToggleBone = M:AddToggle({
+    Name = "Auto Farm Bone",
+    Default = false,
+    Flag = "Auto Farm Bone",
+    Save = true,
+    Callback = function(Value)
+        _G.Auto_Bone = Value
+        StopTween(_G.Auto_Bone)
+    end    
+})
+        
+ToggleRandom = M:AddToggle({
+        Name = "Auto Random Bone",
+        Default = false,
+        Flag = "Auto Random Bone",
+        Save = true,
+        Callback = function(Value)
+            _G.Auto_Random_Bone = Value
+        end    
+    })
+    spawn(function()
+        pcall(function()
+            while wait(.1) do
+                if _G.Auto_Random_Bone then    
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Bones","Buy",1,1)
+                end
+            end
+        end)
+    end)
+
 if Third_Sea then
 local MiscFarm = Tabs.Main:AddSection("Katakuri Farm")
 local Mob_Kill_Cake_Prince = Tabs.Main:AddParagraph({
@@ -2960,8 +2921,7 @@ end)
 
 
 local ToggleCake = Tabs.Main:AddToggle("ToggleCake", {
-    Title = "Auto Farm Cake Prince",
-    Description = "(vip)", 
+    Title = "Auto Farm Cake Prince", 
     Default = false })
 ToggleCake:OnChanged(function(Value)
  _G.CakePrince = Value
@@ -7691,10 +7651,3 @@ spawn(function()
     end
 end)
 end
-----------------------------------------------------------------------------------------------------------------------------------------------
-Fluent:Notify({
-    Title = "NHN HUB",
-    Content = "Helllo you",
-    Durtion = 3
-})
-warn("Cảm ơn bạn đã sử dụng hack")
